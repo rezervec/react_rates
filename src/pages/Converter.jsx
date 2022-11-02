@@ -21,10 +21,8 @@ export const Converter = () => {
     let currFirst = inputArr[1].toUpperCase(); // из какой валюты
     let currSecond = inputArr[3].toUpperCase(); // в какую валюту
     let valueFirst = inputArr[0] // сколько переводим
-    let valueSecond = (1 / rate[currFirst]).toFixed(2) // результат конвертации
+    let valueSecond = (valueFirst / rate[currFirst]).toFixed(2) // результат конвертации
     setResult(valueFirst + currFirst + ' = ' + valueSecond + currSecond) // записываем ответ пользователю
-    
-    console.log(valueSecond)
   }
 
   return (
