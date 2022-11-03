@@ -3,20 +3,18 @@ import { isLangRus } from '../actions/getLocal'
 
 
 const defaultState = {
+  // т.к валюты всего две, решил использовать тип bool
   isRUB: isLangRus()
 }
 
 const currReducer = (state = defaultState, action) => {
   switch (action.type) {
-    case 'RUB':
-      return {...state, isRUB: true}
-    case 'USD':
-      return {...state, isRUB: false}
+    case 'setCurrency':
+      return {...state, isRUB: action.payload === 'RUB'}
     default:
       return state
   }
 }
-export const setCurrRUB = () => ({type: 'RUB'})
-export const setCurrUSD = () => ({type: 'USD'})
+export const setCurrency = (payload) => ({type: 'setCurrency', payload})
 
 export const store = createStore(currReducer)

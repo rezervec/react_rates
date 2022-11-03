@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getRates } from '../actions/getRates'
 import { useFetch } from '../hooks/useFetch'
-import { setCurrRUB, setCurrUSD } from '../store/store'
+import { setCurrency } from '../store/store'
 
 export const Currencies = () => {
 
@@ -32,7 +32,7 @@ export const Currencies = () => {
 
   // меняем булевое состояние на противоположное
   const swapCurr = () => {
-    isRUB ? dispatch(setCurrUSD()) : dispatch(setCurrRUB())
+    dispatch(setCurrency(isRUB ? 'USD' : 'RUB'))
   }
 
   return (
