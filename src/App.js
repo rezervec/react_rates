@@ -1,12 +1,16 @@
-import { Converter } from "./pages/Converter";
-import { Currencies } from "./pages/Currencies";
+import { BrowserRouter } from 'react-router-dom';
+import './style/App.css'
+import { AppRouter } from "./components/AppRouter";
+import { Navbar } from "./components/navigate/Navbar";
 
 function App() {
   return (
-    <div className="App">
-      <Converter/>
-      <Currencies/>
-    </div>
+    <BrowserRouter>
+      <div className="App">
+        <Navbar/>
+        <AppRouter/>
+      </div>
+    </BrowserRouter>
   );
 }
 

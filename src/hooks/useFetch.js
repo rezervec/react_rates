@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 export const useFetch = (callback) => {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false) // состояние промиса
+  const [error, setError] = useState('') // ошибки
 
   // обрабатываем callback-функцию
   const fetchData = async () => {

@@ -1,15 +1,25 @@
 import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { getRates } from '../actions/getRates'
 import { useFetch } from '../hooks/useFetch'
+import { setCurrRUB, setCurrUSD } from '../store/store'
 
 export const Currencies = () => {
 
   const [rate, setRate] = useState([]) // курс валют
-  const [isRUB, setIsRUB] = useState(true)
+
+  const ConvertDataToRate = (data) => {
+  // создаём массив, который заполняем значениями из объекта
+    let rateArr = []
+    for (const [key, value] of Object.entries(data)) {
+      rateArr.push({ key: key, value: value });
+    }
+    return rateArr // возвращаем массив, с которым будем работать 
+  }
 
   const [fetchData, loading, error] = useFetch(async () => {
     const data = await getRates()
-    setRate(data)
+    setRate(ConvertDataToRate(data))
   })
 
   useEffect(() => {
@@ -17,32 +27,41 @@ export const Currencies = () => {
     fetchData()
   }, [])
 
-  var rateArr = []
-  for (const [key, value] of Object.entries(rate)) {
-    rateArr.push({ key: key, value: value });
+  const dispatch = useDispatch() // для изменения состояния
+  const isRUB = useSelector(state => state.isRUB) // записываем состояние в isRUB
+
+  // меняем булевое состояние на противоположное
+  const swapCurr = () => {
+    isRUB ? dispatch(setCurrUSD()) : dispatch(setCurrRUB())
   }
 
   return (
     !loading &&
     <div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', width: '70%' }}>
-        {rateArr.map(r =>
-          <ul key={r.key}>
-            <li>1 {r.key}</li>
-            <li>
+      <div className="table">
+        {rate.map(r =>
+          <div key={r.key}>
+            <p>1 {r.key}</p>
+            <p>
               {isRUB
                 ? (1 / r.value).toFixed(2) + ' Р'
-                : (rate['USD'] / r.value).toFixed(2) + ' $'}
-            </li>
-          </ul>
+                : (rate.find(curr => curr.key === 'USD').value / r.value).toFixed(2) + ' $'
+              }
+            </p>
+          </div>
         )}
       </div>
       
       <button
-        onClick={() => setIsRUB(!isRUB)}
+        className="btn-select"
+        onClick={() => swapCurr()}
       >
         {isRUB ? 'DOLLARS' : 'РУБЛИ'}
       </button>
+
+      {error &&
+        <div>Ошибка: {error}</div>
+      }
     </div>
   )
 }

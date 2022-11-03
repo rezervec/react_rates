@@ -18,35 +18,59 @@ export const Converter = () => {
     fetchData()
   }, [])
 
-  const Transfer = (event) => {
+  const onSubmit = (event) => {
     event.preventDefault()
+    try {
+      // помещаем значения из инпута в массив
+      let inputArr = inputValue.split(' ')
 
-    // помещаем значения из инпута в массив
-    let inputArr = inputValue.split(' ')
+      let currFirst = inputArr[1].toUpperCase(); // из какой валюты
+      let currSecond = inputArr[3].toUpperCase(); // в какую валюту
+      let valueFirst = Number(inputArr[0]) // сколько переводим
+      let valueSecond // результат конвертации
 
-    let currFirst = inputArr[1].toUpperCase(); // из какой валюты
-    let currSecond = inputArr[3].toUpperCase(); // в какую валюту
-    let valueFirst = inputArr[0] // сколько переводим
+      // т.к в API нет RUB прописываем формулу для него отдельно
+      if (currFirst === 'RUB') {
+        valueSecond = (rate[currSecond] * valueFirst).toFixed(2)
+      }
+      else if (currSecond === 'RUB') {
+        valueSecond = (valueFirst / rate[currFirst]).toFixed(2)
+      }
+      else { 
+        valueSecond = (rate[currSecond] / rate[currFirst] * valueFirst).toFixed(2) // формула для всех остальных валют
+      }
 
-    if (currFirst === 'RUB') 
-      var valueSecond = (rate[currSecond] * valueFirst).toFixed(2)
-    else if (currSecond === 'RUB')
-      var valueSecond = (valueFirst / rate[currFirst]).toFixed(2)
-    else 
-      var valueSecond = (rate[currSecond] / rate[currFirst] * valueFirst).toFixed(2)
+      // делаем проверку ввода
+      if (valueSecond==='NaN') {
+        alert('Проверьте правильность ввода валюты и форму записи.\n Например: 3 eur in usd')
+      }
+      else if (!valueFirst) {
+        alert('Первым должно стоять число')
+      }
+      else {
+        setResult(valueFirst + currFirst + ' = ' + valueSecond + currSecond) // записываем ответ пользователю
+      }
 
-    setResult(valueFirst + currFirst + ' = ' + valueSecond + currSecond) // записываем ответ пользователю
+    } catch (error) {
+      alert('Используйте пробел.\n Например: 3 eur in usd')
+    }
   }
 
   return (
     <div>
-      <form onSubmit={Transfer}>
+      <form onSubmit={onSubmit}>
+        <p>Конвертер работает с вводом формата: 15 usd in rub</p>
         <input
           onChange={e => setInputValue(e.target.value)}
         />
         <button>Transfer</button>
       </form>
-      <h3>{result}</h3>
+      {!loading &&
+        <h3>{result}</h3>
+      }
+      {error &&
+        <div>Ошибка: {error}</div>
+      }
     </div>
   )
 }
